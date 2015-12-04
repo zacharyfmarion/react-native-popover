@@ -408,7 +408,7 @@ var styles = StyleSheet.create({
   },
   title: {
       flexDirection: 'row',
-      alignItems: 'stretch',
+      alignSelf: 'stretch',
       flex: 1,
       padding: 6,
       backgroundColor: '#28292c',
