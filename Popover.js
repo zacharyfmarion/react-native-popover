@@ -401,18 +401,12 @@ var styles = StyleSheet.create({
   },
   content: {
       flexDirection: 'column',
-      //had to take this out as it was only applying
-      //it to one corner for some reason
-      //borderRadius: 6
-      backgroundColor: '#333438'
+      borderRadius: 6,
+      backgroundColor: '#28292c'
   },
   title: {
-      flexDirection: 'row',
-      alignSelf: 'stretch',
-      flex: 1,
-      padding: 6,
-      backgroundColor: '#28292c',
-      justifyContent: 'center'
+      alignSelf: 'center',
+      padding: 6
   },
   titleText: {
       justifyContent: 'center',
@@ -421,6 +415,8 @@ var styles = StyleSheet.create({
   },
   viewContent: {
       padding: 6,
+      borderBottomLeftRadius: 6,
+      borderBottomRightRadius: 6,
       backgroundColor: '#333438'
   },
   arrow: {
