@@ -38,6 +38,7 @@ var Popover = React.createClass({
   propTypes: {
     isVisible: PropTypes.bool,
     onClose: PropTypes.func,
+    title: PropTypes.string
   },
   getInitialState() {
     return {
@@ -60,6 +61,7 @@ var Popover = React.createClass({
       arrowSize: DEFAULT_ARROW_SIZE,
       placement: 'auto',
       onClose: noop,
+      title: 'Message'
     };
   },
   measureContent(x) {
@@ -332,11 +334,11 @@ var Popover = React.createClass({
     var {popoverOrigin, placement} = this.state;
     var extendedStyles = this._getExtendedStyles();
     var contentStyle = [styles.content, ...extendedStyles.content];
-    var arrowColor = flattenStyle(contentStyle).backgroundColor;
+    var titleStyle = styles.title;
+    var arrowColor = flattenStyle(styles.title).backgroundColor;
     var arrowColorStyle = this.getArrowColorStyle(arrowColor);
     var arrowDynamicStyle = this.getArrowDynamicStyle();
     var contentSizeAvailable = this.state.contentSize.width;
-
     // Special case, force the arrow rotation even if it was overriden
     var arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
     var arrowTransform = (flattenStyle(arrowStyle).transform || []).slice(0);
@@ -353,7 +355,12 @@ var Popover = React.createClass({
             }, ...extendedStyles.popover]}>
             <Animated.View style={arrowStyle}/>
             <Animated.View ref='content' onLayout={this.measureContent} style={contentStyle}>
-              {this.props.children}
+                <View style={titleStyle}>
+                    <Text style={styles.titleText}>{this.props.title}</Text>
+                </View>
+                <Animated.View style={styles.viewContent}>
+                    {this.props.children}
+                </Animated.View>
             </Animated.View>
           </Animated.View>
         </View>
@@ -382,7 +389,7 @@ var styles = StyleSheet.create({
     left: 0,
     right: 0,
     position: 'absolute',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0)'
   },
   popover: {
     backgroundColor: 'transparent',
@@ -390,12 +397,31 @@ var styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOffset: {width: 0, height: 2},
     shadowRadius: 2,
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.8
   },
   content: {
-    borderRadius: 3,
-    padding: 6,
-    backgroundColor: '#fff',
+      flexDirection: 'column',
+      //had to take this out as it was only applying
+      //it to one corner for some reason
+      //borderRadius: 6
+      backgroundColor: '#333438'
+  },
+  title: {
+      flexDirection: 'row',
+      alignItems: 'stretch',
+      flex: 1,
+      padding: 6,
+      backgroundColor: '#28292c',
+      justifyContent: 'center'
+  },
+  titleText: {
+      justifyContent: 'center',
+      textAlign: 'center',
+      color: '#fff'
+  },
+  viewContent: {
+      padding: 6,
+      backgroundColor: '#333438'
   },
   arrow: {
     position: 'absolute',
