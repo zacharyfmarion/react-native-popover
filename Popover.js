@@ -15,7 +15,7 @@ var Easing = require('react-native/Libraries/Animated/src/Easing');
 var noop = () => {};
 
 var {height: SCREEN_HEIGHT, width: SCREEN_WIDTH} = Dimensions.get('window');
-var DEFAULT_ARROW_SIZE = new Size(10, 5);
+var DEFAULT_ARROW_SIZE = new Size(16, 8);
 
 function Point(x, y) {
   this.x = x;
@@ -38,6 +38,7 @@ var Popover = React.createClass({
   propTypes: {
     isVisible: PropTypes.bool,
     onClose: PropTypes.func,
+    title: PropTypes.node
   },
   getInitialState() {
     return {
@@ -60,6 +61,7 @@ var Popover = React.createClass({
       arrowSize: DEFAULT_ARROW_SIZE,
       placement: 'auto',
       onClose: noop,
+      title: 'Message'
     };
   },
   measureContent(x) {
@@ -332,11 +334,11 @@ var Popover = React.createClass({
     var {popoverOrigin, placement} = this.state;
     var extendedStyles = this._getExtendedStyles();
     var contentStyle = [styles.content, ...extendedStyles.content];
-    var arrowColor = flattenStyle(contentStyle).backgroundColor;
+    var titleStyle = styles.title;
+    var arrowColor = flattenStyle(placement === 'bottom' ? styles.content : styles.viewContent).backgroundColor;
     var arrowColorStyle = this.getArrowColorStyle(arrowColor);
     var arrowDynamicStyle = this.getArrowDynamicStyle();
     var contentSizeAvailable = this.state.contentSize.width;
-
     // Special case, force the arrow rotation even if it was overriden
     var arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
     var arrowTransform = (flattenStyle(arrowStyle).transform || []).slice(0);
@@ -351,10 +353,15 @@ var Popover = React.createClass({
             top: popoverOrigin.y,
             left: popoverOrigin.x,
             }, ...extendedStyles.popover]}>
-            <Animated.View style={arrowStyle}/>
             <Animated.View ref='content' onLayout={this.measureContent} style={contentStyle}>
-              {this.props.children}
+                <View style={titleStyle}>
+                    <Text style={styles.titleText}>{this.props.title}</Text>
+                </View>
+                <Animated.View style={styles.viewContent}>
+                    {this.props.children}
+                </Animated.View>
             </Animated.View>
+            <Animated.View style={arrowStyle}/>
           </Animated.View>
         </View>
       </TouchableWithoutFeedback>
@@ -382,27 +389,42 @@ var styles = StyleSheet.create({
     left: 0,
     right: 0,
     position: 'absolute',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0)'
   },
   popover: {
     backgroundColor: 'transparent',
-    position: 'absolute',
+    position: 'absolute'
+  },
+  content: {
+    flexDirection: 'column',
+    borderRadius: 6,
+    backgroundColor: '#28292c',
     shadowColor: 'black',
     shadowOffset: {width: 0, height: 2},
     shadowRadius: 2,
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.8
   },
-  content: {
-    borderRadius: 3,
-    padding: 6,
-    backgroundColor: '#fff',
+  title: {
+      alignSelf: 'center',
+      padding: 6
+  },
+  titleText: {
+      justifyContent: 'center',
+      textAlign: 'center',
+      color: '#fff'
+  },
+  viewContent: {
+      padding: 6,
+      borderBottomLeftRadius: 6,
+      borderBottomRightRadius: 6,
+      backgroundColor: '#333438'
   },
   arrow: {
     position: 'absolute',
     borderTopColor: 'transparent',
     borderRightColor: 'transparent',
     borderBottomColor: 'transparent',
-    borderLeftColor: 'transparent',
+    borderLeftColor: 'transparent'
   },
 });
 
