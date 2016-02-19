@@ -15,7 +15,7 @@ var Easing = require('react-native/Libraries/Animated/src/Easing');
 var noop = () => {};
 
 var {height: SCREEN_HEIGHT, width: SCREEN_WIDTH} = Dimensions.get('window');
-var DEFAULT_ARROW_SIZE = new Size(10, 5);
+var DEFAULT_ARROW_SIZE = new Size(16, 8);
 
 function Point(x, y) {
   this.x = x;
@@ -335,7 +335,7 @@ var Popover = React.createClass({
     var extendedStyles = this._getExtendedStyles();
     var contentStyle = [styles.content, ...extendedStyles.content];
     var titleStyle = styles.title;
-    var arrowColor = flattenStyle(styles.title).backgroundColor;
+    var arrowColor = flattenStyle(placement === 'bottom' ? styles.content : styles.viewContent).backgroundColor;
     var arrowColorStyle = this.getArrowColorStyle(arrowColor);
     var arrowDynamicStyle = this.getArrowDynamicStyle();
     var contentSizeAvailable = this.state.contentSize.width;
@@ -353,7 +353,6 @@ var Popover = React.createClass({
             top: popoverOrigin.y,
             left: popoverOrigin.x,
             }, ...extendedStyles.popover]}>
-            <Animated.View style={arrowStyle}/>
             <Animated.View ref='content' onLayout={this.measureContent} style={contentStyle}>
                 <View style={titleStyle}>
                     <Text style={styles.titleText}>{this.props.title}</Text>
@@ -362,6 +361,7 @@ var Popover = React.createClass({
                     {this.props.children}
                 </Animated.View>
             </Animated.View>
+            <Animated.View style={arrowStyle}/>
           </Animated.View>
         </View>
       </TouchableWithoutFeedback>
@@ -393,16 +393,16 @@ var styles = StyleSheet.create({
   },
   popover: {
     backgroundColor: 'transparent',
-    position: 'absolute',
+    position: 'absolute'
+  },
+  content: {
+    flexDirection: 'column',
+    borderRadius: 6,
+    backgroundColor: '#28292c',
     shadowColor: 'black',
     shadowOffset: {width: 0, height: 2},
     shadowRadius: 2,
     shadowOpacity: 0.8
-  },
-  content: {
-      flexDirection: 'column',
-      borderRadius: 6,
-      backgroundColor: '#28292c'
   },
   title: {
       alignSelf: 'center',
@@ -424,7 +424,7 @@ var styles = StyleSheet.create({
     borderTopColor: 'transparent',
     borderRightColor: 'transparent',
     borderBottomColor: 'transparent',
-    borderLeftColor: 'transparent',
+    borderLeftColor: 'transparent'
   },
 });
 
