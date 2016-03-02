@@ -18,9 +18,7 @@
     "release": "npm-release"
   },
   "files": [
-    "Popover.js",
-    "Example",
-    "Screnshots"
+    "Popover.js"
   ],
   "devDependencies": {
     "react-native": "0.19.0",
