@@ -72,12 +72,12 @@ var Popover = React.createClass({
         });
     },
 
-    computeGeometry({contentSize, placement}) {
+    computeGeometry({contentSize, placement}, fromRect) {
         placement = placement || this.props.placement;
-
+        fromRect = fromRect || this.props.fromRect
         var options = {
             displayArea: this.props.displayArea,
-            fromRect: this.props.fromRect,
+            fromRect: fromRect,
             arrowSize: this.getArrowSize(placement),
             contentSize
         }
@@ -236,6 +236,7 @@ var Popover = React.createClass({
         var willBeVisible = nextProps.isVisible;
         var {
             isVisible,
+            fromRect
         } = this.props;
 
         if (willBeVisible !== isVisible) {
@@ -246,6 +247,18 @@ var Popover = React.createClass({
             } else {
                 this._startAnimation({show: false});
             }
+        } else if (willBeVisible && nextProps.fromRect !== fromRect) {
+            var contentSize = this.state.contentSize;
+
+            var geom = this.computeGeometry({contentSize}, nextProps.fromRect);
+
+            var isAwaitingShow = this.state.isAwaitingShow;
+            this.setState(Object.assign(geom, {contentSize, isAwaitingShow: undefined}), () => {
+                // Once state is set, call the showHandler so it can access all the geometry
+                // from the state
+                isAwaitingShow && this._startAnimation({show: true});
+
+            });
         }
     },
 

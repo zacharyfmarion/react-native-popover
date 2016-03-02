@@ -1,6 +1,6 @@
 {
-  "name": "react-native-popover",
-  "version": "0.3.3",
+  "name": "@taw/react-native-popover",
+  "version": "0.3.7",
   "description": "A <Popover /> component for react-native",
   "main": "Popover.js",
   "author": "Jean Regisser <jean.regisser@gmail.com> (https://github.com/jeanregisser)",
@@ -14,9 +14,14 @@
   ],
   "license": "MIT",
   "scripts": {
-    "start": "node_modules/react-native/packager/packager.sh"
+    "start": "node_modules/react-native/packager/packager.sh",
+    "release": "npm-release"
   },
-  "peerDependencies": {
-    "react-native": "0.19.0"
+  "files": [
+    "Popover.js"
+  ],
+  "devDependencies": {
+    "react-native": "0.19.0",
+    "npm-release": "^1.0.0"
   }
 }
