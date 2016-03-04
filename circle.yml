@@ -1,0 +1,17 @@
+machine:
+    node:
+        version: 4.1.1
+    post:
+        - npm install -g npm@3.x.x
+        - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+
+test:
+    override:
+        - echo 'No tests'
+
+deployment:
+    develop:
+        branch: develop
+        commands:
+            - npm run ci-pre-publish
+            - npm publish
