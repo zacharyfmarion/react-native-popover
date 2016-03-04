@@ -382,7 +382,7 @@ var Popover = React.createClass({
                             <View style={titleStyle}>
                                 <Text style={styles.titleText}>{this.props.title}</Text>
                             </View>
-                            <Animated.View style={styles.viewContent, {width: contentSizeAvailable}}>
+                            <Animated.View style={[styles.viewContent, {width: contentSizeAvailable}]}>
                                 {this.props.children}
                             </Animated.View>
                         </Animated.View>
@@ -422,7 +422,8 @@ var styles = StyleSheet.create({
     content: {
         flexDirection: 'column',
         borderRadius: 6,
-        backgroundColor: '#28292c',
+        // backgroundColor: '#28292c',
+        backgroundColor: 'rgba(50,50,50,0.8)',
         shadowColor: 'black',
         shadowOffset: {width: 0, height: 2},
         shadowRadius: 2,
@@ -438,10 +439,9 @@ var styles = StyleSheet.create({
         color: '#fff'
     },
     viewContent: {
-        padding: 6,
         borderBottomLeftRadius: 6,
         borderBottomRightRadius: 6,
-        backgroundColor: '#333438'
+        backgroundColor: 'rgba(200,200,200,0.1)'
     },
     arrow: {
         position: 'absolute',
