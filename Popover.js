@@ -364,7 +364,7 @@ var Popover = React.createClass({
         var extendedStyles = this._getExtendedStyles();
         var contentStyle = [styles.content, ...extendedStyles.content];
         var titleStyle = styles.title;
-        var arrowColor = flattenStyle(placement === 'bottom' ? styles.content : styles.viewContent).backgroundColor;
+        var arrowColor = flattenStyle(styles.content).backgroundColor;
         var arrowColorStyle = this.getArrowColorStyle(arrowColor);
         var arrowDynamicStyle = this.getArrowDynamicStyle();
         var contentSizeAvailable = this.state.contentSize.width;
