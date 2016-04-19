@@ -444,10 +444,6 @@ var styles = StyleSheet.create({
         position: 'absolute',
         backgroundColor: 'rgba(0,0,0,0)'
     },
-    popover: {
-        backgroundColor: 'transparent',
-        position: 'absolute'
-    },
     content: {
         flexDirection: 'column',
     },
@@ -456,7 +452,8 @@ var styles = StyleSheet.create({
         shadowColor: 'black',
         shadowOffset: {width: 0, height: 2},
         shadowRadius: 2,
-        shadowOpacity: 0.8
+        shadowOpacity: 0.8,
+        position: 'absolute'
     },
     select: {
         backgroundColor: '#f2f2f2'
