@@ -1,6 +1,6 @@
 {
   "name": "@taw/react-native-popover",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A <Popover /> component for react-native",
   "main": "Popover.js",
   "author": "Jean Regisser <jean.regisser@gmail.com> (https://github.com/jeanregisser)",
