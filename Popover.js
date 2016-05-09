@@ -44,8 +44,8 @@ var Popover = React.createClass({
             defaultAnimatedValues: {
                 scale: new Animated.Value(0),
                 translate: new Animated.ValueXY(),
-                fade: new Animated.Value(0),
-            },
+                fade: new Animated.Value(0)
+            }
         };
     },
 
@@ -97,16 +97,16 @@ var Popover = React.createClass({
         }
 
         switch (placement) {
-            case 'top':
-                return this.computeTopGeometry(options);
-            case 'bottom':
-                return this.computeBottomGeometry(options);
-            case 'left':
-                return this.computeLeftGeometry(options);
-            case 'right':
-                return this.computeRightGeometry(options);
-            default:
-                return this.computeAutoGeometry(options);
+        case 'top':
+            return this.computeTopGeometry(options);
+        case 'bottom':
+            return this.computeBottomGeometry(options);
+        case 'left':
+            return this.computeLeftGeometry(options);
+        case 'right':
+            return this.computeRightGeometry(options);
+        default:
+            return this.computeAutoGeometry(options);
         }
     },
 
@@ -365,7 +365,7 @@ var Popover = React.createClass({
             background,
             popover,
             arrow,
-            content,
+            content
         }
     },
 
@@ -398,11 +398,11 @@ var Popover = React.createClass({
         return (
             <TouchableWithoutFeedback onPress={this.props.onClose}>
                 <View style={[styles.container, contentSizeAvailable && styles.containerVisible]}>
-                    <Animated.View style={[styles.popover, {top: popoverOrigin.y, left: popoverOrigin.x,}, ...extendedStyles.popover]}>
+                    <Animated.View style={[{top: popoverOrigin.y, left: popoverOrigin.x,}, ...extendedStyles.popover]}>
                         <Animated.View ref='content' onLayout={this.measureContent} style={[contentStyle, contentStyling]}>
                             {this.props.title !== null && this.props.title !== undefined
                                 ?
-                                <View style={titleStyle}>
+                                <View style={[titleStyle, {width: contentSizeAvailable}]}>
                                     <Text style={styles.titleText}>{this.props.title}</Text>
                                 </View>
                                 : null
@@ -448,7 +448,7 @@ var styles = StyleSheet.create({
         flexDirection: 'column',
     },
     popover: {
-        backgroundColor: '#28292c',
+        backgroundColor: '#333438',
         shadowColor: 'black',
         shadowOffset: {width: 0, height: 2},
         shadowRadius: 2,
@@ -456,15 +456,17 @@ var styles = StyleSheet.create({
         position: 'absolute'
     },
     select: {
-        backgroundColor: '#f2f2f2'
+        backgroundColor: '#f2f2f2',
+        position: 'absolute'
     },
     title: {
-        alignSelf: 'center',
+        alignItems: 'center',
+        backgroundColor: '#28292c',
         padding: 6
     },
     titleText: {
         justifyContent: 'center',
-        textAlign: 'center',
+        alignSelf: 'center',
         color: '#fff'
     },
     arrow: {
@@ -473,7 +475,7 @@ var styles = StyleSheet.create({
         borderRightColor: 'transparent',
         borderBottomColor: 'transparent',
         borderLeftColor: 'transparent'
-    },
+    }
 });
 
 module.exports = Popover;
