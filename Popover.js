@@ -59,7 +59,7 @@ var Popover = React.createClass({
     getDefaultProps() {
         return {
             isVisible: false,
-            displayArea: new Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
+            displayArea: new Rect(10, 10, SCREEN_WIDTH-20, SCREEN_HEIGHT-20),
             arrowSize: DEFAULT_ARROW_SIZE,
             placement: PLACEMENT_OPTIONS.AUTO,
             onClose: noop,
