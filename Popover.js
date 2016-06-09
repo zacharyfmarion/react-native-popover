@@ -386,6 +386,7 @@ var Popover = React.createClass({
         var contentContainerStyle = [styles.contentContainer, ...extendedStyles.content];
         var contentModeStyling;
         var contentStyle;
+        var popoverMargin;
 
         var arrowColorStyle;
         var arrowDynamicStyle = this.getArrowDynamicStyle();
@@ -398,11 +399,18 @@ var Popover = React.createClass({
             contentStyle = styles.popoverContent;
             if (placement === PLACEMENT_OPTIONS.TOP) {
                 arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.title).backgroundColor);
+                popoverMargin = [styles.topPopoverMargin, styles.rightPopoverMargin, styles.leftPopoverMargin];
+            } else if (placement === PLACEMENT_OPTIONS.LEFT) {
+                arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.popoverContent).backgroundColor);
+                popoverMargin = [styles.topPopoverMargin, styles.bottomPopoverMargin, styles.leftPopoverMargin];
+            } else if (placement === PLACEMENT_OPTIONS.RIGHT) {
+                arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.popoverContent).backgroundColor);
+                popoverMargin = [styles.topPopoverMargin, styles.bottomPopoverMargin, styles.rightPopoverMargin];
             } else {
                 arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.popoverContent).backgroundColor);
-            }
+                popoverMargin = [styles.leftPopoverMargin, styles.bottomPopoverMargin, styles.rightPopoverMargin];
+            } 
         }
-
         // Special case, force the arrow rotation even if it was overriden
         var arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
         var arrowTransform = (flattenStyle(arrowStyle).transform || []).slice(0);
@@ -416,7 +424,7 @@ var Popover = React.createClass({
             <TouchableWithoutFeedback onPress={this.props.onClose}>
                 <View style={[styles.container, contentSizeAvailable && styles.containerVisible]}>
                     <Animated.View style={[{top: popoverOrigin.y, left: popoverOrigin.x,}, ...extendedStyles.popover]}>
-                        <Animated.View ref='content' onLayout={this.measureContent} style={[contentContainerStyle, contentModeStyling]}>
+                        <Animated.View ref='content' onLayout={this.measureContent} style={[contentContainerStyle, contentModeStyling, popoverMargin]}>
                             {this.props.title !== null && this.props.title !== undefined
                                 ?
                                 <View style={[titleStyle, {width: contentSizeAvailable}, styles.dropShadow]}>
@@ -466,6 +474,18 @@ var styles = StyleSheet.create({
     },
     popoverContainer: {
         position: 'absolute'
+    },
+    leftPopoverMargin: {
+        marginLeft: 20
+    },
+    rightPopoverMargin: {
+        marginRight: 20
+    },
+    topPopoverMargin: {
+        marginTop: 20
+    },
+    bottomPopoverMargin: {
+        marginBottom: 20
     },
     popoverContent: {
         backgroundColor: '#333438',
