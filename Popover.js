@@ -59,7 +59,7 @@ var Popover = React.createClass({
     getDefaultProps() {
         return {
             isVisible: false,
-            displayArea: new Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
+            displayArea: new Rect(10, 10, SCREEN_WIDTH-20, SCREEN_HEIGHT-20),
             arrowSize: DEFAULT_ARROW_SIZE,
             placement: PLACEMENT_OPTIONS.AUTO,
             onClose: noop,
@@ -386,7 +386,6 @@ var Popover = React.createClass({
         var contentContainerStyle = [styles.contentContainer, ...extendedStyles.content];
         var contentModeStyling;
         var contentStyle;
-
         var arrowColorStyle;
         var arrowDynamicStyle = this.getArrowDynamicStyle();
 
@@ -400,9 +399,8 @@ var Popover = React.createClass({
                 arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.title).backgroundColor);
             } else {
                 arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.popoverContent).backgroundColor);
-            }
+            } 
         }
-
         // Special case, force the arrow rotation even if it was overriden
         var arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
         var arrowTransform = (flattenStyle(arrowStyle).transform || []).slice(0);
