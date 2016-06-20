@@ -38,7 +38,7 @@ var Popover = React.createClass({
     propTypes: {
         isVisible: PropTypes.bool,
         onClose: PropTypes.func,
-        title: PropTypes.node,
+        title: PropTypes.node,u
         mode: PropTypes.string
     },
 
@@ -75,6 +75,8 @@ var Popover = React.createClass({
 
         var isAwaitingShow = this.state.isAwaitingShow;
         
+        //Debounce to prevent flickering when displaying a popover with content
+        //that doesn't show immediately.
         this.updateState(Object.assign(geom, {contentSize, isAwaitingShow: undefined}), () => {
             // Once state is set, call the showHandler so it can access all the geometry
             // from the state
