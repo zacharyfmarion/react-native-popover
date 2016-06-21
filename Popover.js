@@ -1,6 +1,7 @@
 'use strict';
 
 import React, {PropTypes, StyleSheet, Dimensions, Animated, Text, TouchableWithoutFeedback, View} from 'react-native';
+import _ from 'underscore';
 
 var flattenStyle = require('react-native/Libraries/StyleSheet/flattenStyle');
 var Easing = require('react-native/Libraries/Animated/src/Easing');
@@ -73,11 +74,21 @@ var Popover = React.createClass({
         var geom = this.computeGeometry({contentSize});
 
         var isAwaitingShow = this.state.isAwaitingShow;
-        this.setState(Object.assign(geom, {contentSize, isAwaitingShow: undefined}), () => {
+        
+        //Debounce to prevent flickering when displaying a popover with content
+        //that doesn't show immediately.
+        this.updateState(Object.assign(geom, {contentSize, isAwaitingShow: undefined}), () => {
             // Once state is set, call the showHandler so it can access all the geometry
             // from the state
             isAwaitingShow && this._startAnimation({show: true});
         });
+    },
+
+    updateState(state, callback) {
+        if(!this._updateState) {
+            this._updateState = _.debounce(this.setState.bind(this), 100);
+        }
+        this._updateState(state, callback);
     },
 
     computeGeometry({contentSize, placement}, fromRect) {
