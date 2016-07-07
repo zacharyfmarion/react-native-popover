@@ -405,7 +405,8 @@ var Popover = React.createClass({
             contentModeStyling = styles.selectContainer;
         } else {
             contentModeStyling = styles.popoverContainer;
-            contentStyle = styles.popoverContent;
+            this.props.title == null ? contentStyle = [styles.popoverContent, styles.popoverTopRadius]: contentStyle = styles.popoverContent;  
+            
             if (placement === PLACEMENT_OPTIONS.TOP) {
                 arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.title).backgroundColor);
             } else {
@@ -481,6 +482,10 @@ var styles = StyleSheet.create({
         borderBottomLeftRadius: 9,
         borderBottomRightRadius: 9,
         borderBottomColor: '#333438'
+    },
+    popoverTopRadius: {
+        borderTopLeftRadius: 9,
+        borderTopRightRadius: 9
     },
     selectContainer: {
         backgroundColor: '#f2f2f2',
