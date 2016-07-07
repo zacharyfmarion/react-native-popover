@@ -405,7 +405,7 @@ var Popover = React.createClass({
             contentModeStyling = styles.selectContainer;
         } else {
             contentModeStyling = styles.popoverContainer;
-            this.props.title == null ? contentStyle = [styles.popoverContent, styles.popoverTopRadius]: contentStyle = styles.popoverContent;  
+            contentStyle = this.props.title == null ? [styles.popoverContent, styles.popoverTopRadius] : styles.popoverContent;
             
             if (placement === PLACEMENT_OPTIONS.TOP) {
                 arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.title).backgroundColor);
