@@ -107,8 +107,16 @@ var Popover = React.createClass({
             arrowSize = this.getArrowSize(placement);
         }
 
+        // To check if fromRect is having screen dimensions
+        var displayArea;
+        if (fromRect.SCREEN_WIDTH != undefined && fromRect.SCREEN_HEIGHT != undefined) {
+            displayArea = new Rect(10, 10, fromRect.SCREEN_WIDTH-20, fromRect.SCREEN_HEIGHT-20);
+        } else {
+            displayArea = this.props.displayArea;
+        }
+
         var options = {
-            displayArea: this.props.displayArea,
+            displayArea: displayArea,
             fromRect: fromRect,
             arrowSize: arrowSize,
             contentSize
