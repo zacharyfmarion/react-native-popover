@@ -2,6 +2,7 @@
 
 import React, {PropTypes} from 'react';
 import {StyleSheet, Dimensions, Animated, Text, TouchableWithoutFeedback, View} from 'react-native';
+import _ from 'underscore';
 
 var flattenStyle = require('react-native/Libraries/StyleSheet/flattenStyle');
 var Easing = require('react-native/Libraries/Animated/src/Easing');
@@ -9,6 +10,13 @@ var noop = () => {};
 
 var {height: SCREEN_HEIGHT, width: SCREEN_WIDTH} = Dimensions.get('window');
 var DEFAULT_ARROW_SIZE = new Size(16, 8);
+const PLACEMENT_OPTIONS = {
+    TOP: 'top',
+    RIGHT: 'right',
+    BOTTOM: 'bottom',
+    LEFT: 'left',
+    AUTO: 'auto'
+};
 
 function Point(x, y) {
     this.x = x;
@@ -40,22 +48,22 @@ var Popover = React.createClass({
             contentSize: {},
             anchorPoint: {},
             popoverOrigin: {},
-            placement: 'auto',
+            placement: PLACEMENT_OPTIONS.AUTO,
             isTransitioning: false,
             defaultAnimatedValues: {
                 scale: new Animated.Value(0),
                 translate: new Animated.ValueXY(),
-                fade: new Animated.Value(0),
-            },
+                fade: new Animated.Value(0)
+            }
         };
     },
 
     getDefaultProps() {
         return {
             isVisible: false,
-            displayArea: new Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
+            displayArea: new Rect(10, 10, SCREEN_WIDTH-20, SCREEN_HEIGHT-20),
             arrowSize: DEFAULT_ARROW_SIZE,
-            placement: 'auto',
+            placement: PLACEMENT_OPTIONS.AUTO,
             onClose: noop,
             mode: 'popover'
         };
@@ -67,11 +75,21 @@ var Popover = React.createClass({
         var geom = this.computeGeometry({contentSize});
 
         var isAwaitingShow = this.state.isAwaitingShow;
-        this.setState(Object.assign(geom, {contentSize, isAwaitingShow: undefined}), () => {
+        
+        //Debounce to prevent flickering when displaying a popover with content
+        //that doesn't show immediately.
+        this.updateState(Object.assign(geom, {contentSize, isAwaitingShow: undefined}), () => {
             // Once state is set, call the showHandler so it can access all the geometry
             // from the state
             isAwaitingShow && this._startAnimation({show: true});
         });
+    },
+
+    updateState(state, callback) {
+        if(!this._updateState) {
+            this._updateState = _.debounce(this.setState.bind(this), 100);
+        }
+        this._updateState(state, callback);
     },
 
     computeGeometry({contentSize, placement}, fromRect) {
@@ -90,24 +108,32 @@ var Popover = React.createClass({
             arrowSize = this.getArrowSize(placement);
         }
 
+        // To check if fromRect is having screen dimensions
+        var displayArea;
+        if (fromRect.SCREEN_WIDTH != undefined && fromRect.SCREEN_HEIGHT != undefined) {
+            displayArea = new Rect(10, 10, fromRect.SCREEN_WIDTH-20, fromRect.SCREEN_HEIGHT-20);
+        } else {
+            displayArea = this.props.displayArea;
+        }
+
         var options = {
-            displayArea: this.props.displayArea,
+            displayArea: displayArea,
             fromRect: fromRect,
             arrowSize: arrowSize,
             contentSize
         }
 
         switch (placement) {
-            case 'top':
-                return this.computeTopGeometry(options);
-            case 'bottom':
-                return this.computeBottomGeometry(options);
-            case 'left':
-                return this.computeLeftGeometry(options);
-            case 'right':
-                return this.computeRightGeometry(options);
-            default:
-                return this.computeAutoGeometry(options);
+        case PLACEMENT_OPTIONS.TOP:
+            return this.computeTopGeometry(options);
+        case PLACEMENT_OPTIONS.BOTTOM:
+            return this.computeBottomGeometry(options);
+        case PLACEMENT_OPTIONS.LEFT:
+            return this.computeLeftGeometry(options);
+        case PLACEMENT_OPTIONS.RIGHT:
+            return this.computeRightGeometry(options);
+        default:
+            return this.computeAutoGeometry(options);
         }
     },
 
@@ -122,7 +148,7 @@ var Popover = React.createClass({
         return {
             popoverOrigin,
             anchorPoint,
-            placement: 'top'
+            placement: PLACEMENT_OPTIONS.TOP
         }
     },
 
@@ -137,7 +163,7 @@ var Popover = React.createClass({
         return {
             popoverOrigin,
             anchorPoint,
-            placement: 'bottom'
+            placement: PLACEMENT_OPTIONS.BOTTOM
         }
     },
 
@@ -151,7 +177,7 @@ var Popover = React.createClass({
         return {
             popoverOrigin,
             anchorPoint,
-            placement: 'left'
+            placement: PLACEMENT_OPTIONS.LEFT
         }
     },
 
@@ -165,7 +191,7 @@ var Popover = React.createClass({
         return {
             popoverOrigin,
             anchorPoint,
-            placement: 'right'
+            placement: PLACEMENT_OPTIONS.RIGHT
         }
     },
 
@@ -191,8 +217,8 @@ var Popover = React.createClass({
     getArrowSize(placement) {
         var size = this.props.arrowSize;
         switch(placement) {
-            case 'left':
-            case 'right':
+            case PLACEMENT_OPTIONS.LEFT:
+            case PLACEMENT_OPTIONS.RIGHT:
                 return new Size(size.height, size.width);
             default:
                 return size;
@@ -205,11 +231,11 @@ var Popover = React.createClass({
 
     getArrowRotation(placement) {
         switch (placement) {
-            case 'bottom':
+            case PLACEMENT_OPTIONS.BOTTOM:
                 return '180deg';
-            case 'left':
+            case PLACEMENT_OPTIONS.LEFT:
                 return '-90deg';
-            case 'right':
+            case PLACEMENT_OPTIONS.RIGHT:
                 return '90deg';
             default:
                 return '0deg';
@@ -366,7 +392,7 @@ var Popover = React.createClass({
             background,
             popover,
             arrow,
-            content,
+            content
         }
     },
 
@@ -377,38 +403,47 @@ var Popover = React.createClass({
 
         var {popoverOrigin, placement} = this.state;
         var extendedStyles = this._getExtendedStyles();
-        var contentStyle = [styles.content, ...extendedStyles.content];
-        var contentStyling;
+        var contentContainerStyle = [styles.contentContainer, ...extendedStyles.content];
+        var contentModeStyling;
+        var contentStyle;
+        var arrowColorStyle;
+        var arrowDynamicStyle = this.getArrowDynamicStyle();
+
         //apply the relevant style required
         if (this.props.mode === 'select') {
-            contentStyling = styles.select;
+            contentModeStyling = styles.selectContainer;
         } else {
-            contentStyling = styles.popover;
+            contentModeStyling = styles.popoverContainer;
+            contentStyle = this.props.title == null ? [styles.popoverContent, styles.popoverTopRadius] : styles.popoverContent;
+            
+            if (placement === PLACEMENT_OPTIONS.TOP) {
+                arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.title).backgroundColor);
+            } else {
+                arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.popoverContent).backgroundColor);
+            } 
         }
-        var titleStyle = styles.title;
-        var arrowColor = flattenStyle(styles.content).backgroundColor;
-        var arrowColorStyle = this.getArrowColorStyle(arrowColor);
-        var arrowDynamicStyle = this.getArrowDynamicStyle();
-        var contentSizeAvailable = this.state.contentSize.width;
         // Special case, force the arrow rotation even if it was overriden
         var arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
         var arrowTransform = (flattenStyle(arrowStyle).transform || []).slice(0);
         arrowTransform.unshift({rotate: this.getArrowRotation(placement)});
         arrowStyle = [...arrowStyle, {transform: arrowTransform}];
 
+        var titleStyle = styles.title;
+        var contentSizeAvailable = this.state.contentSize.width;
+
         return (
             <TouchableWithoutFeedback onPress={this.props.onClose}>
                 <View style={[styles.container, contentSizeAvailable && styles.containerVisible]}>
-                    <Animated.View style={[styles.popover, {top: popoverOrigin.y, left: popoverOrigin.x,}, ...extendedStyles.popover]}>
-                        <Animated.View ref='content' onLayout={this.measureContent} style={[contentStyle, contentStyling]}>
+                    <Animated.View style={[{top: popoverOrigin.y, left: popoverOrigin.x,}, ...extendedStyles.popover]}>
+                        <Animated.View ref='content' onLayout={this.measureContent} style={[contentContainerStyle, contentModeStyling]}>
                             {this.props.title !== null && this.props.title !== undefined
                                 ?
-                                <View style={titleStyle}>
+                                <View style={[titleStyle, {width: contentSizeAvailable}, styles.dropShadow]}>
                                     <Text style={styles.titleText}>{this.props.title}</Text>
                                 </View>
                                 : null
                             }
-                            <Animated.View style={styles.viewContent, {width: contentSizeAvailable}}>
+                            <Animated.View style={[{width: contentSizeAvailable}, contentStyle, styles.dropShadow]}>
                                 {this.props.children}
                             </Animated.View>
                         </Animated.View>
@@ -445,27 +480,43 @@ var styles = StyleSheet.create({
         position: 'absolute',
         backgroundColor: 'rgba(0,0,0,0)'
     },
-    content: {
+    contentContainer: {
         flexDirection: 'column',
     },
-    popover: {
-        backgroundColor: '#28292c',
+    popoverContainer: {
+        position: 'absolute'
+    },
+    popoverContent: {
+        backgroundColor: '#333438',
+        borderBottomLeftRadius: 9,
+        borderBottomRightRadius: 9,
+        borderBottomColor: '#333438'
+    },
+    popoverTopRadius: {
+        borderTopLeftRadius: 9,
+        borderTopRightRadius: 9
+    },
+    selectContainer: {
+        backgroundColor: '#f2f2f2',
+        position: 'absolute'
+    },
+    dropShadow: {
         shadowColor: 'black',
         shadowOffset: {width: 0, height: 2},
         shadowRadius: 2,
-        shadowOpacity: 0.8,
-        position: 'absolute'
-    },
-    select: {
-        backgroundColor: '#f2f2f2'
+        shadowOpacity: 0.8
     },
     title: {
-        alignSelf: 'center',
+        alignItems: 'center',
+        backgroundColor: '#28292c',
+        borderTopLeftRadius: 9,
+        borderTopRightRadius: 9,
+        borderTopColor: '#28292c',
         padding: 6
     },
     titleText: {
         justifyContent: 'center',
-        textAlign: 'center',
+        alignSelf: 'center',
         color: '#fff'
     },
     arrow: {
@@ -474,7 +525,7 @@ var styles = StyleSheet.create({
         borderRightColor: 'transparent',
         borderBottomColor: 'transparent',
         borderLeftColor: 'transparent'
-    },
+    }
 });
 
 module.exports = Popover;
