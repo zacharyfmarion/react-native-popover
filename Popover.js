@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {PropTypes, StyleSheet, Dimensions, Animated, Text, TouchableWithoutFeedback, View} from 'react-native';
+import React, {PropTypes} from 'react';
+import {StyleSheet, Dimensions, Animated, Text, TouchableWithoutFeedback, View} from 'react-native';
 import _ from 'underscore';
 
 var flattenStyle = require('react-native/Libraries/StyleSheet/flattenStyle');
