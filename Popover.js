@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {PropTypes, StyleSheet, Dimensions, Animated, Text, TouchableWithoutFeedback, View} from 'react-native';
+import React, {PropTypes} from 'react';
+import {StyleSheet, Dimensions, Animated, Text, TouchableWithoutFeedback, View} from 'react-native';
 
 var flattenStyle = require('react-native/Libraries/StyleSheet/flattenStyle');
 var Easing = require('react-native/Libraries/Animated/src/Easing');
