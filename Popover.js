@@ -405,6 +405,7 @@ var Popover = React.createClass({
         var extendedStyles = this._getExtendedStyles();
         var contentContainerStyle = [styles.contentContainer, ...extendedStyles.content];
         var contentModeStyling;
+        var dropShadowStyling;
         var contentStyle;
         var arrowColorStyle;
         var arrowDynamicStyle = this.getArrowDynamicStyle();
@@ -412,8 +413,10 @@ var Popover = React.createClass({
         //apply the relevant style required
         if (this.props.mode === 'select') {
             contentModeStyling = styles.selectContainer;
+            dropShadowStyling = null;
         } else {
             contentModeStyling = styles.popoverContainer;
+            dropShadowStyling = styles.dropShadow;
             contentStyle = this.props.title == null ? [styles.popoverContent, styles.popoverTopRadius] : styles.popoverContent;
             
             if (placement === PLACEMENT_OPTIONS.TOP) {
@@ -438,12 +441,12 @@ var Popover = React.createClass({
                         <Animated.View ref='content' onLayout={this.measureContent} style={[contentContainerStyle, contentModeStyling]}>
                             {this.props.title !== null && this.props.title !== undefined
                                 ?
-                                <View style={[titleStyle, {width: contentSizeAvailable}, styles.dropShadow]}>
+                                <View style={[titleStyle, {width: contentSizeAvailable}, dropShadowStyling]}>
                                     <Text style={styles.titleText}>{this.props.title}</Text>
                                 </View>
                                 : null
                             }
-                            <Animated.View style={[{width: contentSizeAvailable}, contentStyle, styles.dropShadow]}>
+                            <Animated.View style={[{width: contentSizeAvailable}, contentStyle, dropShadowStyling]}>
                                 {this.props.children}
                             </Animated.View>
                         </Animated.View>
