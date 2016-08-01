@@ -196,7 +196,12 @@ var Popover = React.createClass({
     },
 
     computeAutoGeometry({displayArea, contentSize}) {
-        var placementsToTry = ['left', 'right', 'bottom', 'top'];
+        let placementsToTry;
+        if (this.props.mode === 'popover') {
+            placementsToTry = ['left', 'right', 'bottom', 'top'];
+        } else {
+            placementsToTry = ['bottom', 'top'];
+        }
 
         for (var i = 0; i < placementsToTry.length; i++) {
             var placement = placementsToTry[i];
