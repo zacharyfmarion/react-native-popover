@@ -40,7 +40,8 @@ var Popover = React.createClass({
         isVisible: PropTypes.bool,
         onClose: PropTypes.func,
         title: PropTypes.node,
-        mode: PropTypes.string
+        mode: PropTypes.string,
+        polarity: PropTypes.number
     },
 
     getInitialState() {
@@ -65,7 +66,8 @@ var Popover = React.createClass({
             arrowSize: DEFAULT_ARROW_SIZE,
             placement: PLACEMENT_OPTIONS.AUTO,
             onClose: noop,
-            mode: 'popover'
+            mode: 'popover',
+            polarity: 1
         };
     },
 
@@ -75,7 +77,7 @@ var Popover = React.createClass({
         var geom = this.computeGeometry({contentSize});
 
         var isAwaitingShow = this.state.isAwaitingShow;
-        
+
         //Debounce to prevent flickering when displaying a popover with content
         //that doesn't show immediately.
         this.updateState(Object.assign(geom, {contentSize, isAwaitingShow: undefined}), () => {
@@ -239,9 +241,9 @@ var Popover = React.createClass({
             case PLACEMENT_OPTIONS.BOTTOM:
                 return '180deg';
             case PLACEMENT_OPTIONS.LEFT:
-                return '-90deg';
+                return (this.props.polarity * -90) + 'deg';
             case PLACEMENT_OPTIONS.RIGHT:
-                return '90deg';
+                return this.props.polarity * 90 + 'deg';
             default:
                 return '0deg';
         }
@@ -423,12 +425,12 @@ var Popover = React.createClass({
             contentModeStyling = styles.popoverContainer;
             dropShadowStyling = styles.dropShadow;
             contentStyle = this.props.title == null ? [styles.popoverContent, styles.popoverTopRadius] : styles.popoverContent;
-            
+
             if (placement === PLACEMENT_OPTIONS.TOP) {
                 arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.title).backgroundColor);
             } else {
                 arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.popoverContent).backgroundColor);
-            } 
+            }
         }
         // Special case, force the arrow rotation even if it was overriden
         var arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
