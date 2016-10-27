@@ -41,7 +41,7 @@ var Popover = React.createClass({
         onClose: PropTypes.func,
         title: PropTypes.node,
         mode: PropTypes.string,
-        polarity: PropTypes.number
+        layoutDirection: PropTypes.string
     },
 
     getInitialState() {
@@ -66,8 +66,7 @@ var Popover = React.createClass({
             arrowSize: DEFAULT_ARROW_SIZE,
             placement: PLACEMENT_OPTIONS.AUTO,
             onClose: noop,
-            mode: 'popover',
-            polarity: 1
+            mode: 'popover'
         };
     },
 
@@ -169,6 +168,10 @@ var Popover = React.createClass({
         }
     },
 
+    get polarity () {
+        return this.props.layoutDirection === 'rtl' ? -1 : 1;
+    }
+
     computeLeftGeometry({displayArea, fromRect, contentSize, arrowSize}) {
         var popoverOrigin = new Point(fromRect.x - contentSize.width - arrowSize.width,
             Math.min(displayArea.y + displayArea.height - contentSize.height,
@@ -241,9 +244,9 @@ var Popover = React.createClass({
             case PLACEMENT_OPTIONS.BOTTOM:
                 return '180deg';
             case PLACEMENT_OPTIONS.LEFT:
-                return (this.props.polarity * -90) + 'deg';
+                return (this.polarity * -90) + 'deg';
             case PLACEMENT_OPTIONS.RIGHT:
-                return this.props.polarity * 90 + 'deg';
+                return this.polarity * 90 + 'deg';
             default:
                 return '0deg';
         }
@@ -277,7 +280,7 @@ var Popover = React.createClass({
 
         var popoverCenter = new Point(popoverOrigin.x + contentSize.width / 2,
             popoverOrigin.y + contentSize.height / 2);
-        return new Point(this.props.polarity * (anchorPoint.x - popoverCenter.x), anchorPoint.y - popoverCenter.y);
+        return new Point(this.polarity * (anchorPoint.x - popoverCenter.x), anchorPoint.y - popoverCenter.y);
     },
 
     componentWillReceiveProps(nextProps:any) {
