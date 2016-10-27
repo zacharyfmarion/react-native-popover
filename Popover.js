@@ -40,7 +40,8 @@ var Popover = React.createClass({
         isVisible: PropTypes.bool,
         onClose: PropTypes.func,
         title: PropTypes.node,
-        mode: PropTypes.string
+        mode: PropTypes.string,
+        layoutDirection: PropTypes.string
     },
 
     getInitialState() {
@@ -75,7 +76,7 @@ var Popover = React.createClass({
         var geom = this.computeGeometry({contentSize});
 
         var isAwaitingShow = this.state.isAwaitingShow;
-        
+
         //Debounce to prevent flickering when displaying a popover with content
         //that doesn't show immediately.
         this.updateState(Object.assign(geom, {contentSize, isAwaitingShow: undefined}), () => {
@@ -167,6 +168,10 @@ var Popover = React.createClass({
         }
     },
 
+    getPolarity () {
+        return this.props.layoutDirection === 'rtl' ? -1 : 1;
+    },
+
     computeLeftGeometry({displayArea, fromRect, contentSize, arrowSize}) {
         var popoverOrigin = new Point(fromRect.x - contentSize.width - arrowSize.width,
             Math.min(displayArea.y + displayArea.height - contentSize.height,
@@ -239,9 +244,9 @@ var Popover = React.createClass({
             case PLACEMENT_OPTIONS.BOTTOM:
                 return '180deg';
             case PLACEMENT_OPTIONS.LEFT:
-                return '-90deg';
+                return (this.getPolarity() * -90) + 'deg';
             case PLACEMENT_OPTIONS.RIGHT:
-                return '90deg';
+                return this.getPolarity() * 90 + 'deg';
             default:
                 return '0deg';
         }
@@ -275,7 +280,7 @@ var Popover = React.createClass({
 
         var popoverCenter = new Point(popoverOrigin.x + contentSize.width / 2,
             popoverOrigin.y + contentSize.height / 2);
-        return new Point(anchorPoint.x - popoverCenter.x, anchorPoint.y - popoverCenter.y);
+        return new Point(this.getPolarity() * (anchorPoint.x - popoverCenter.x), anchorPoint.y - popoverCenter.y);
     },
 
     componentWillReceiveProps(nextProps:any) {
@@ -423,12 +428,12 @@ var Popover = React.createClass({
             contentModeStyling = styles.popoverContainer;
             dropShadowStyling = styles.dropShadow;
             contentStyle = this.props.title == null ? [styles.popoverContent, styles.popoverTopRadius] : styles.popoverContent;
-            
+
             if (placement === PLACEMENT_OPTIONS.TOP) {
                 arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.title).backgroundColor);
             } else {
                 arrowColorStyle = this.getArrowColorStyle(flattenStyle(styles.popoverContent).backgroundColor);
-            } 
+            }
         }
         // Special case, force the arrow rotation even if it was overriden
         var arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
