@@ -31,6 +31,7 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
+    "@taw/build-scripts": "^1.4.0",
     "@taw/condition-vsts": "^1.0.5",
     "json": "^9.0.3",
     "react-native": "0.29.0",
