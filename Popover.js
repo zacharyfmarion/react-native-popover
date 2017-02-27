@@ -541,4 +541,4 @@ var styles = StyleSheet.create({
     }
 });
 
-module.exports = Popover; 
+module.exports = Popover;
