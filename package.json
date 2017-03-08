@@ -1,6 +1,6 @@
 {
   "name": "@taw/react-native-popover",
-  "version": "0.0.0-development",
+  "version": "2.8.0",
   "description": "A <Popover /> component for react-native",
   "main": "Popover.js",
   "author": "Jean Regisser <jean.regisser@gmail.com> (https://github.com/jeanregisser)",
@@ -22,7 +22,7 @@
     "ci-pre-publish-release-branch": "json -I -f package.json -e \"this.release.branch='${BUILD_SOURCEBRANCH#refs/heads/}'\"",
     "ci-release-branch": "git-release-branch",
     "git-vsts-branch": "git-vsts-branch",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post && npm-save-commit"
+    "release": "npm run lint && npm-release"
   },
   "files": [
     "Popover.js"
@@ -34,8 +34,8 @@
     "@taw/build-scripts": "^1.4.0",
     "@taw/condition-vsts": "^1.0.5",
     "json": "^9.0.3",
-    "react-native": "0.29.0",
-    "semantic-release": "^6.3.2"
+    "npm-release": "^1.0.0",
+    "react-native": "0.29.0"
   },
   "repository": {
     "type": "git",
