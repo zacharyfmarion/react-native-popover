@@ -24,6 +24,7 @@
     "git-vsts-branch": "git-vsts-branch",
     "release": "npm-release"
   },
+  "private": true,
   "files": [
     "Popover.js"
   ],
