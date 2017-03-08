@@ -22,7 +22,7 @@
     "ci-pre-publish-release-branch": "json -I -f package.json -e \"this.release.branch='${BUILD_SOURCEBRANCH#refs/heads/}'\"",
     "ci-release-branch": "git-release-branch",
     "git-vsts-branch": "git-vsts-branch",
-    "release": "npm run lint && npm-release"
+    "release": "npm-release"
   },
   "files": [
     "Popover.js"
